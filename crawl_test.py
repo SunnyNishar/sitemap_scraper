@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
 # Starting URL
-start_url = "https://www.feedspot.com/widgets"
+start_url = "https://www.youtube.com"
 
 # Keep track of visited links
 visited = set()
