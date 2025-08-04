@@ -1,38 +1,54 @@
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+import mysql.connector
+import re
 
-# Starting URL
-start_url = "https://www.youtube.com"
+# === 📁 Input/output files ===
+INPUT_FILE = "./documents/all_discovered_apple_ids.txt"
+OUTPUT_FILE = "./documents/new_ids_to_insert.txt"
 
-# Keep track of visited links
-visited = set()
+# === 🛢 Database connection config ===
+DB_CONFIG = {"host": "localhost", "user": "root", "password": "", "database": "sitemap"}
 
-# Only crawl 1 level deep for now
-def crawl(url):
-    if url in visited:
-        return
-    visited.add(url)
 
-    print(f"Visiting: {url}")
-    try:
-        response = requests.get(url, timeout=5)
-        if response.status_code != 200:
-            print(f"Failed to fetch {url}")
-            return
-    except Exception as e:
-        print(f"Error: {e}")
-        return
+# === 📖 Step 1: Read Apple IDs from the input file ===
+def read_ids_from_file(file_path):
+    ids = set()
+    with open(file_path, "r") as f:
+        for line in f:
+            match = re.search(r"\b(\d{6,15})\b", line)
+            if match:
+                ids.add(match.group(1))
+    return ids
 
-    soup = BeautifulSoup(response.text, "html.parser")
 
-    # Find and print all links
-    links = soup.find_all("a")
-    for link in links:
-        href = link.get("href")
-        if href:
-            full_url = urljoin(url, href)  # Handle relative links
-            print("→ Found link:", full_url)
+# === 🗃 Step 2: Read existing Apple IDs from the database ===
+def read_ids_from_db():
+    conn = mysql.connector.connect(**DB_CONFIG)
+    cursor = conn.cursor()
+    cursor.execute("SELECT apple_id FROM test_apple_ids")
+    db_ids = set(str(row[0]) for row in cursor.fetchall())
+    cursor.close()
+    conn.close()
+    return db_ids
 
-# Run the crawler on the start URL
-crawl(start_url)
+
+# === 🆕 Step 3: Compare and find new IDs ===
+def save_new_ids_to_file(new_ids, file_path):
+    with open(file_path, "w") as f:
+        for i, aid in enumerate(sorted(new_ids), 1):
+            f.write(f"{i}. {aid}\n")
+    print(f"✅ {len(new_ids)} new Apple IDs saved to '{file_path}'")
+
+
+# === 🏁 Main ===
+if __name__ == "__main__":
+    print("📖 Reading Apple IDs from file...")
+    file_ids = read_ids_from_file(INPUT_FILE)
+
+    print("🗃 Fetching Apple IDs from database...")
+    db_ids = read_ids_from_db()
+
+    print("🔍 Comparing IDs...")
+    new_ids = file_ids - db_ids
+
+    print(f"🆕 Found {len(new_ids)} new IDs not in DB")
+    save_new_ids_to_file(new_ids, OUTPUT_FILE)

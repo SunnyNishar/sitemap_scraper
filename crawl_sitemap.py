@@ -1,8 +1,8 @@
 import re
 from lxml import etree
 
-SITEMAP_FILE = "sitemaps_podcasts_podcast_100_1.xml"
-OUTPUT_FILE = "extracted_ids.txt"
+SITEMAP_FILE = "./dataset/sitemaps_podcasts_podcast_100_1.xml"
+OUTPUT_FILE = "./documents/extracted_ids.txt"
 
 ids = set()
 tree = etree.parse(SITEMAP_FILE)
