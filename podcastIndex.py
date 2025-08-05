@@ -171,6 +171,9 @@ def collect_apple_ids():
 
         # Use all 112 categories but with a reasonable sample for testing
         # You can remove the [:20] to use all categories
+        # sample_categories = (
+        #     category_names[:20] if len(category_names) > 20 else category_names
+        # )
         sample_categories = category_names
 
         for i, category in enumerate(sample_categories, 1):

@@ -2,7 +2,7 @@ import mysql.connector
 import re
 
 # === 📁 Input/output files ===
-INPUT_FILE = "./documents/all_discovered_apple_ids.txt"
+INPUT_FILE = "./documents/apple_ids_from_genres_regions.txt"
 OUTPUT_FILE = "./documents/new_ids_to_insert.txt"
 
 # === 🛢 Database connection config ===
@@ -24,7 +24,7 @@ def read_ids_from_file(file_path):
 def read_ids_from_db():
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
-    cursor.execute("SELECT apple_id FROM test_apple_ids")
+    cursor.execute("SELECT apple_id FROM bigint_apple_ids")
     db_ids = set(str(row[0]) for row in cursor.fetchall())
     cursor.close()
     conn.close()
@@ -32,11 +32,31 @@ def read_ids_from_db():
 
 
 # === 🆕 Step 3: Compare and find new IDs ===
+# === 🆕 Step 3: Compare and append new IDs to output file (no duplicates) ===
 def save_new_ids_to_file(new_ids, file_path):
+    existing_ids = set()
+
+    # Read existing IDs from the file (if exists)
+    try:
+        with open(file_path, "r") as f:
+            for line in f:
+                match = re.search(r"\b(\d{6,15})\b", line)
+                if match:
+                    existing_ids.add(match.group(1))
+    except FileNotFoundError:
+        pass  # File doesn't exist yet, that's okay
+
+    # Merge existing IDs with new IDs (avoid duplicates)
+    all_ids = sorted(existing_ids.union(new_ids))
+
+    # Write all unique IDs back to the file with numbering
     with open(file_path, "w") as f:
-        for i, aid in enumerate(sorted(new_ids), 1):
-            f.write(f"{i}. {aid}\n")
-    print(f"✅ {len(new_ids)} new Apple IDs saved to '{file_path}'")
+        for i, aid in enumerate(all_ids, 1):
+            f.write(f"{aid}\n")
+
+    print(
+        f"✅ {len(new_ids)} new Apple IDs added (total: {len(all_ids)} unique IDs in file)"
+    )
 
 
 # === 🏁 Main ===
