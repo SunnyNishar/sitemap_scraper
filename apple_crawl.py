@@ -4,6 +4,7 @@ import os
 # === Expanded Genre IDs ===
 # Top-level genres and key sub-genres (official Apple genre IDs)
 GENRE_IDS = [
+    26,
     1301,  # Arts
     1302,  # Business
     1303,  # Comedy

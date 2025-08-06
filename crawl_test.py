@@ -2,7 +2,7 @@ import mysql.connector
 import re
 
 # === 📁 Input/output files ===
-INPUT_FILE = "./documents/apple_ids_from_genres_regions.txt"
+INPUT_FILE = "./documents/all_discovered_apple_ids.txt"
 OUTPUT_FILE = "./documents/new_ids_to_insert.txt"
 
 # === 🛢 Database connection config ===
@@ -46,8 +46,10 @@ def save_new_ids_to_file(new_ids, file_path):
     except FileNotFoundError:
         pass  # File doesn't exist yet, that's okay
 
+    truly_new_ids = new_ids - existing_ids
+
     # Merge existing IDs with new IDs (avoid duplicates)
-    all_ids = sorted(existing_ids.union(new_ids))
+    all_ids = sorted(existing_ids.union(truly_new_ids))
 
     # Write all unique IDs back to the file with numbering
     with open(file_path, "w") as f:
@@ -55,7 +57,7 @@ def save_new_ids_to_file(new_ids, file_path):
             f.write(f"{aid}\n")
 
     print(
-        f"✅ {len(new_ids)} new Apple IDs added (total: {len(all_ids)} unique IDs in file)"
+        f"✅ {len(truly_new_ids)} new Apple IDs added (total: {len(all_ids)} unique IDs in file)"
     )
 
 
