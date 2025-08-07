@@ -2,7 +2,7 @@ import mysql.connector
 import re
 
 # === 📁 Input/output files ===
-INPUT_FILE = "./documents/all_discovered_apple_ids.txt"
+INPUT_FILE = "./documents/new_ids_from_sitemaps.txt"
 OUTPUT_FILE = "./documents/new_ids_to_insert.txt"
 
 # === 🛢 Database connection config ===
