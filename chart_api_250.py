@@ -1,7 +1,5 @@
 import requests
 import os
-import json
-import re
 
 GENRE_LOOKUP_URL = "https://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/genres"
 
@@ -201,76 +199,44 @@ REGIONS = [
 ]
 
 all_apple_ids = set()
-apple_ids_with_timestamps = []
-unexpected_formats = []
 failed_requests = []
 
 for region in REGIONS:
     for genre_id, genre_name in ALL_GENRES.items():
-        url = f"https://itunes.apple.com/{region}/rss/toppodcasts/limit=200/genre={genre_id}/json"
+        url = f"https://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/charts?cc={region}&g={genre_id}&name=Podcasts&limit=200"
         print(f"📥 Fetching {region.upper()} | {genre_id} - {genre_name}")
         try:
-            res = requests.get(url)
+            res = requests.get(url, timeout=10)
             res.raise_for_status()
-            feed_data = res.json()
-            entries = feed_data.get("feed", {}).get("entry", [])
+            data = res.json()
 
-            for entry in entries:
-                id_field = entry.get("id", "")
-                podcast_url = (
-                    id_field.get("label", "")
-                    if isinstance(id_field, dict)
-                    else id_field
-                )
-
-                id_match = re.search(r"/id(\d+)", podcast_url)
-                if id_match:
-                    apple_id = id_match.group(1)
-                    updated_time = ""
-
-                    if "im:releaseDate" in entry:
-                        release_field = entry["im:releaseDate"]
-                        updated_time = (
-                            release_field.get("label", "")
-                            if isinstance(release_field, dict)
-                            else release_field
-                        )
-
-                    if not updated_time and "updated" in entry:
-                        updated_field = entry["updated"]
-                        updated_time = (
-                            updated_field.get("label", "")
-                            if isinstance(updated_field, dict)
-                            else updated_field
-                        )
-
-                    if not updated_time and "published" in entry:
-                        published_field = entry["published"]
-                        updated_time = (
-                            published_field.get("label", "")
-                            if isinstance(published_field, dict)
-                            else published_field
-                        )
-
-                    if apple_id not in all_apple_ids:
-                        all_apple_ids.add(apple_id)
-                        apple_ids_with_timestamps.append((apple_id, updated_time))
-                else:
-                    unexpected_formats.append(
-                        f"{region} | {genre_id} | No ID pattern found in: {podcast_url}"
-                    )
+            ids = data.get("resultIds", [])
+            if ids:
+                all_apple_ids.update(map(str, ids))
+            else:
+                print(f"⚠️ No IDs for {region.upper()} | {genre_id} - {genre_name}")
 
         except Exception as e:
             print(f"❌ Error: {e}")
             failed_requests.append((region, genre_id, genre_name))
 
-# Save Apple IDs + updated times
-output_path = "./documents/apple_ids_with_updated_time.txt"
+
+# Save Apple IDs
+output_path = "./documents/chart_api_200.txt"
 os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
 with open(output_path, "w") as f:
-    for apple_id, updated_time in sorted(apple_ids_with_timestamps):
-        f.write(f"{apple_id} | {updated_time}\n")
+    for apple_id in sorted(all_apple_ids):
+        f.write(apple_id + "\n")
 
+# Save failed requests
+failed_requests_path = "./documents/failed_requests.txt"
+with open(failed_requests_path, "w") as f:
+    for region, genre_id, genre_name in failed_requests:
+        f.write(f"{region.upper()} | {genre_id} - {genre_name}\n")
+
+# Final summary
 print(f"\n✅ Done. Total unique Apple IDs: {len(all_apple_ids)}")
 print(f"📁 Saved to: {output_path}")
+if failed_requests:
+    print(f"⚠️ {len(failed_requests)} Failed requests logged to: {failed_requests_path}")

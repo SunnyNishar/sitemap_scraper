@@ -2,7 +2,7 @@ import mysql.connector
 import re
 
 # === 📁 Input/output files ===
-INPUT_FILE = "./documents/apple_ids_from_all_genres_regions.txt"
+INPUT_FILE = "./documents/chart_api_200.txt"
 OUTPUT_FILE = "./documents/new_ids_to_insert.txt"
 
 # === 🛢 Database connection config ===
