@@ -1,6 +1,5 @@
 import requests
 import os
-import json
 import re
 
 GENRE_LOOKUP_URL = "https://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/genres"

@@ -1,83 +1,13 @@
-BJ | 1484 - Drama
-VN | 1536 - Mathematics
-GD | 1482 - Books
-HN | 1440 - Islam
-PA | 1524 - Music History
-PA | 1525 - Music Interviews
-PA | 1489 - News
-PA | 1490 - Business News
-PA | 1526 - Daily News
-PA | 1531 - Entertainment News
-PA | 1530 - News Commentary
-PA | 1527 - Politics
-PA | 1529 - Sports News
-PA | 1528 - Tech News
-PA | 1314 - Religion & Spirituality
-PA | 1438 - Buddhism
-PA | 1439 - Christianity
-PA | 1463 - Hinduism
-PA | 1440 - Islam
-PA | 1441 - Judaism
-PA | 1532 - Religion
-PA | 1444 - Spirituality
-PA | 1533 - Science
-PA | 1538 - Astronomy
-PA | 1539 - Chemistry
-PA | 1540 - Earth Sciences
-PA | 1541 - Life Sciences
-PA | 1536 - Mathematics
-PA | 1534 - Natural Sciences
-PA | 1537 - Nature
-PA | 1542 - Physics
-PA | 1535 - Social Sciences
-PA | 1324 - Society & Culture
-PA | 1543 - Documentary
-PA | 1302 - Personal Journals
-PA | 1443 - Philosophy
-PA | 1320 - Places & Travel
-PA | 1544 - Relationships
-PA | 1545 - Sports
-PA | 1549 - Baseball
-PA | 1548 - Basketball
-PA | 1554 - Cricket
-PA | 1560 - Fantasy Sports
-PA | 1547 - Football
-PA | 1553 - Golf
-PA | 1550 - Hockey
-PA | 1552 - Rugby
-PA | 1551 - Running
-PA | 1546 - Soccer
-PA | 1558 - Swimming
-PA | 1556 - Tennis
-PA | 1557 - Volleyball
-PA | 1559 - Wilderness
-PA | 1555 - Wrestling
-PA | 1309 - TV & Film
-PA | 1562 - After Shows
-PA | 1564 - Film History
-PA | 1565 - Film Interviews
-PA | 1563 - Film Reviews
-PA | 1561 - TV Reviews
-PA | 1318 - Technology
-PA | 1488 - True Crime
-PY | 1301 - Arts
-PY | 1482 - Books
-PY | 1402 - Design
-PY | 1459 - Fashion & Beauty
-PY | 1306 - Food
-PY | 1405 - Performing Arts
-PY | 1406 - Visual Arts
-PY | 1321 - Business
-PY | 1410 - Careers
-PY | 1493 - Entrepreneurship
-PY | 1412 - Investing
-PY | 1491 - Management
-PY | 1492 - Marketing
-PY | 1494 - Non-Profit
-PY | 1303 - Comedy
-PY | 1496 - Comedy Interviews
-PY | 1495 - Improv
-PY | 1497 - Stand-Up
-PY | 1304 - Education
-PY | 1501 - Courses
-PY | 1499 - How To
+US | 1553 - Golf | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1553/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E50E079D0>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1554 - Cricket | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1554/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E50E06990>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1555 - Wrestling | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1555/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E50E07D90>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1556 - Tennis | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1556/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E50E07B10>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1557 - Volleyball | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1557/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E50E06FD0>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1558 - Swimming | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1558/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E50E04CD0>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1559 - Wilderness | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1559/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E50E06D50>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1560 - Fantasy Sports | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1560/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E50E07390>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1561 - TV Reviews | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1561/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E50E06350>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1562 - After Shows | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1562/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E50E06710>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1563 - Film Reviews | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1563/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E51DFC2D0>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1564 - Film History | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1564/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E51DFC690>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
+US | 1565 - Film Interviews | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /us/rss/toppodcasts/limit=200/genre=1565/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000017E51DFCA50>: Failed to resolve 'itunes.apple.com' ([Errno 11001] getaddrinfo failed)"))
