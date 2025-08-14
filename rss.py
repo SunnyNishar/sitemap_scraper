@@ -15,7 +15,7 @@ DB_CONFIG = {
     "host": "localhost",
     "user": "root",
     "password": "",
-    "database": "podcast",
+    "database": "podcast2",
 }
 
 OUTPUT_DIR = "./documents"
@@ -25,6 +25,13 @@ UNEXPECTED_LOG = os.path.join(OUTPUT_DIR, "unexpected_id_formats.txt")
 FAILED_REQ_LOG = os.path.join(OUTPUT_DIR, "failed_requests.txt")
 FAILED_INSERTS_LOG = os.path.join(OUTPUT_DIR, "failed_inserts.txt")
 CSV_OUTPUT = os.path.join(OUTPUT_DIR, "rank_comparison.csv")
+
+REGIONS = ["us", "in"]  # add more if needed
+
+COUNTRY_NAMES = {
+    "us": "United States",
+    "in": "India",
+}
 
 
 # ===============================
@@ -48,59 +55,104 @@ def collect_genre_info(genre_dict, parent_name=None, depth=0):
     return ids
 
 
-def compare_ranks(db_cursor, region, category, subcategory):
-    """Compare today's vs yesterday's ranks for a given genre & return changes."""
-    # Fetch yesterday's ranks
-    db_cursor.execute(
-        """
-        SELECT appleid, chart_rank, title
-        FROM unique_apple_chart_old
-        WHERE countryCode=%s AND category=%s AND (
-            (subcategory IS NULL AND %s IS NULL) OR subcategory=%s
-        )
-    """,
-        (region, category, subcategory, subcategory),
-    )
-    old_data = {
-        row[0]: (row[1], row[2]) for row in db_cursor.fetchall()
-    }  # appleid: (rank, title)
+def sort_genres_with_podcasts_first(genres_list):
+    return sorted(genres_list, key=lambda x: (0 if x[0] == 26 else 1, x[0]))
 
-    # Fetch today's ranks
-    db_cursor.execute(
-        """
+
+def get_last_table_name(cursor):
+    cursor.execute("""
+        SELECT TABLE_NAME
+        FROM information_schema.TABLES
+        WHERE TABLE_SCHEMA = 'podcast2'
+        AND TABLE_NAME LIKE 'apple_chart_%'
+        ORDER BY TABLE_NAME DESC
+        LIMIT 1
+    """)
+    result = cursor.fetchone()
+    return result[0] if result else None
+
+
+def create_new_table(cursor, table_name):
+    cursor.execute(f"""
+        CREATE TABLE {table_name} (
+            id int NOT NULL AUTO_INCREMENT,
+            chart_rank int DEFAULT NULL,
+            podcast_url varchar(255) DEFAULT NULL,
+            appleid varchar(50) DEFAULT NULL,
+            title varchar(255) DEFAULT NULL,
+            img_url varchar(255) DEFAULT NULL,
+            countryCode varchar(10) DEFAULT NULL,
+            countryName varchar(100) DEFAULT NULL,
+            category varchar(50) DEFAULT NULL,
+            subcategory varchar(255) DEFAULT NULL,
+            createdTime datetime DEFAULT NULL,
+            updatedTime datetime DEFAULT NULL,
+            PRIMARY KEY (id)
+        ) ENGINE=InnoDB
+    """)
+
+
+def compare_ranks(cursor, last_table, current_table, region, category, subcategory):
+    if not last_table:
+        cursor.execute(
+            f"""
+            SELECT appleid, chart_rank, title, countryCode, countryName
+            FROM {current_table}
+            WHERE countryCode=%s AND category=%s AND (
+                (subcategory IS NULL AND %s IS NULL) OR subcategory=%s
+            )
+        """,
+            (region, category, subcategory, subcategory),
+        )
+        new_data = {
+            row[0]: (row[1], row[2], row[3], row[4]) for row in cursor.fetchall()
+        }
+        return [
+            (aid, title, new_rank, None, "NEW", country_code, country_name)
+            for aid, (new_rank, title, country_code, country_name) in new_data.items()
+        ]
+
+    cursor.execute(
+        f"""
         SELECT appleid, chart_rank, title
-        FROM unique_apple_chart
+        FROM {last_table}
         WHERE countryCode=%s AND category=%s AND (
             (subcategory IS NULL AND %s IS NULL) OR subcategory=%s
         )
     """,
         (region, category, subcategory, subcategory),
     )
-    new_data = {
-        row[0]: (row[1], row[2]) for row in db_cursor.fetchall()
-    }  # appleid: (rank, title)
+    old_data = {row[0]: (row[1], row[2]) for row in cursor.fetchall()}
+
+    cursor.execute(
+        f"""
+        SELECT appleid, chart_rank, title, countryCode, countryName
+        FROM {current_table}
+        WHERE countryCode=%s AND category=%s AND (
+            (subcategory IS NULL AND %s IS NULL) OR subcategory=%s
+        )
+    """,
+        (region, category, subcategory, subcategory),
+    )
+    new_data = {row[0]: (row[1], row[2], row[3], row[4]) for row in cursor.fetchall()}
 
     results = []
-    for aid, (new_rank, title) in new_data.items():
+    for aid, (new_rank, title, country_code, country_name) in new_data.items():
         old_rank, _ = old_data.get(aid, (None, None))
         if old_rank is None:
             change = "NEW"
         else:
             diff = old_rank - new_rank
             change = f"+{diff}" if diff > 0 else (str(diff) if diff < 0 else "0")
-
-        results.append((aid, title, new_rank, old_rank, change))
+        results.append(
+            (aid, title, new_rank, old_rank, change, country_code, country_name)
+        )
 
     return results
 
 
-def sort_genres_with_podcasts_first(genres_list):
-    """Sorts genres so 'Podcasts' (id 26) comes first, rest by genre_id order."""
-    return sorted(genres_list, key=lambda x: (0 if x[0] == 26 else 1, x[0]))
-
-
 # ===============================
-# MAIN FETCH & INSERT
+# MAIN
 # ===============================
 try:
     response = requests.get(GENRE_LOOKUP_URL, timeout=30)
@@ -113,19 +165,21 @@ except Exception as e:
 ALL_GENRES_INFO = collect_genre_info({"26": genres_data["26"]})
 GENRE_LIST = sort_genres_with_podcasts_first(list(ALL_GENRES_INFO.items()))
 
-REGIONS = ["us"]
-
 db = mysql.connector.connect(**DB_CONFIG)
 cursor = db.cursor()
 
-print("♻️ Moving current snapshot to old table...")
-cursor.execute("TRUNCATE TABLE unique_apple_chart_old")
-cursor.execute("INSERT INTO unique_apple_chart_old SELECT * FROM unique_apple_chart")
-cursor.execute("TRUNCATE TABLE unique_apple_chart")
-db.commit()
+# Get last table name and create new one
+last_table = get_last_table_name(cursor)
+now = datetime.datetime.now()
+current_table = f"apple_chart_{now.strftime('%Y%m%d_%H%M%S')}"
+create_new_table(cursor, current_table)
 
-insert_sql = """
-INSERT INTO unique_apple_chart
+print(f"📊 Created new table: {current_table}")
+if last_table:
+    print(f"📊 Will compare with: {last_table}")
+
+insert_sql = f"""
+INSERT INTO {current_table}
 (chart_rank, podcast_url, appleid, title, img_url, countryCode, countryName, category, subcategory, createdTime, updatedTime)
 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
 """
@@ -134,12 +188,13 @@ all_apple_ids = set()
 failed_requests, unexpected_formats, failed_inserts = [], [], []
 
 for region in REGIONS:
+    print(f"\n🌍 Processing region: {region.upper()}")
     for idx, (genre_id, (category_name, subcategory_name)) in enumerate(
         GENRE_LIST, start=1
     ):
         display_name = subcategory_name if subcategory_name else category_name
         print(
-            f"📥 [{idx}/{len(GENRE_LIST)}] {region.upper()} | {genre_id} - {display_name}"
+            f"🔥 [{idx}/{len(GENRE_LIST)}] {region.upper()} | {genre_id} - {display_name}"
         )
 
         url = f"https://itunes.apple.com/{region}/rss/toppodcasts/limit=200/genre={genre_id}/json"
@@ -165,9 +220,10 @@ for region in REGIONS:
                     if entry.get("im:image")
                     else ""
                 )
-                now = datetime.datetime.now()
                 subcat_value = subcategory_name if subcategory_name else None
+                country_name = COUNTRY_NAMES.get(region, region.upper())
 
+                now = datetime.datetime.now()
                 try:
                     cursor.execute(
                         insert_sql,
@@ -178,7 +234,7 @@ for region in REGIONS:
                             title,
                             img_url,
                             region,
-                            None,
+                            country_name,
                             category_name,
                             subcat_value,
                             now,
@@ -194,6 +250,7 @@ for region in REGIONS:
 
 db.commit()
 
+# Save outputs
 with open(OUTPUT_IDS, "w") as f:
     for aid in sorted(all_apple_ids):
         f.write(aid + "\n")
@@ -205,15 +262,17 @@ with open(FAILED_REQ_LOG, "w") as f:
 with open(FAILED_INSERTS_LOG, "w") as f:
     f.write("\n".join(failed_inserts))
 
-# ===============================
-# COMPARE RANKS PER GENRE IN PYTHON
-# ===============================
+db.commit()
+# Compare and save CSV
+# Compare and save CSV
 with open(CSV_OUTPUT, "w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
     writer.writerow(
         [
             "appleid",
             "title",
+            "country_code",
+            "country_name",
             "category",
             "subcategory",
             "current_rank",
@@ -222,20 +281,41 @@ with open(CSV_OUTPUT, "w", newline="", encoding="utf-8") as f:
         ]
     )
 
-    for genre_id, (category_name, subcategory_name) in GENRE_LIST:
-        changes = compare_ranks(cursor, "us", category_name, subcategory_name)
-        for aid, title, new_rank, old_rank, change in changes:
-            writer.writerow(
-                [
-                    aid,
-                    title,
+    if last_table and last_table != current_table:
+        for region in REGIONS:
+            for genre_id, (category_name, subcategory_name) in GENRE_LIST:
+                changes = compare_ranks(
+                    cursor,
+                    last_table,
+                    current_table,
+                    region,
                     category_name,
                     subcategory_name,
+                )
+                for (
+                    aid,
+                    title,
                     new_rank,
                     old_rank,
                     change,
-                ]
-            )
+                    country_code,
+                    country_name,
+                ) in changes:
+                    writer.writerow(
+                        [
+                            aid,
+                            title,
+                            country_code,
+                            country_name,
+                            category_name,
+                            subcategory_name,
+                            new_rank,
+                            old_rank,
+                            change,
+                        ]
+                    )
+    else:
+        print("⚠️ No previous table found — skipping rank comparison.")
 
 print(f"✅ Rank comparison saved to {CSV_OUTPUT}")
 
