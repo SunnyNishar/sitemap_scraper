@@ -1,0 +1,3 @@
+JP | 1459 - Fashion & Beauty | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /jp/rss/toppodcasts/limit=200/genre=1459/json (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000017C3D6AD950>, 'Connection to itunes.apple.com timed out. (connect timeout=20)'))
+CN | 1441 - Judaism | 'str' object has no attribute 'get'
+RU | 1498 - Language Learning | HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /ru/rss/toppodcasts/limit=200/genre=1498/json (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000017C40181090>, 'Connection to itunes.apple.com timed out. (connect timeout=20)'))
