@@ -23,7 +23,7 @@ CHART_LIMIT = 250
 
 # Enhanced retry configuration
 MAX_RETRIES = 5
-BACKOFF_FACTOR = 2
+BACKOFF_FACTOR = 3
 RETRY_STATUS_CODES = [429, 500, 502, 503, 504]
 REQUEST_TIMEOUT = (10, 30)  # (connect timeout, read timeout)
 MAX_CONSECUTIVE_FAILURES = 10
@@ -42,7 +42,6 @@ FAILED_REQ_LOG = os.path.join(OUTPUT_DIR, "failed_requests_charts.txt")
 FAILED_INSERTS_LOG = os.path.join(OUTPUT_DIR, "failed_inserts_charts.txt")
 CSV_OUTPUT = os.path.join(OUTPUT_DIR, "rank_comparison_charts.csv")
 
-# Expanded regions list from yt.py
 REGIONS = [
     "dz",
     "ao",
@@ -448,7 +447,7 @@ def safe_request_with_backoff(session, url, context="", max_attempts=None):
             # Add jitter to prevent thundering herd
             if attempt > 0:
                 jitter = random.uniform(0.5, 1.5)
-                sleep_time = (BACKOFF_FACTOR**attempt) * jitter * 2
+                sleep_time = (BACKOFF_FACTOR**attempt) * jitter * 3
                 print(
                     f"    💤 Retry {attempt + 1}/{max_attempts} for {context} - sleeping {sleep_time:.1f}s"
                 )
