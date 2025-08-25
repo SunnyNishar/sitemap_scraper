@@ -18,44 +18,47 @@ from requests.packages.urllib3.util.retry import Retry
 # LOGGING SETUP
 # ===============================
 def setup_logging():
-    """Set up comprehensive logging system"""
+    """Set up comprehensive logging system (append to same daily log)."""
     # Create logs directory if it doesn't exist
     log_dir = "./logs"
     os.makedirs(log_dir, exist_ok=True)
 
-    # Create timestamp for log file
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_file = os.path.join(log_dir, f"podcast_charts_{timestamp}.log")
+    # Use only date so reruns/crashes on same day append to the same files
+    run_date = datetime.datetime.now().strftime("%Y%m%d")
+    log_file = os.path.join(log_dir, f"podcast_charts_{run_date}.log")
+    error_log_file = os.path.join(log_dir, f"podcast_charts_errors_{run_date}.log")
 
-    # Create formatters
+    # Formatters
     detailed_formatter = logging.Formatter(
         "%(asctime)s | %(levelname)-8s | %(funcName)-20s | Line %(lineno)-4d | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-
     simple_formatter = logging.Formatter(
         "%(asctime)s | %(levelname)-8s | %(message)s", datefmt="%H:%M:%S"
     )
 
-    # Create root logger
+    # Root logger
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
 
-    # File handler - logs everything
-    file_handler = logging.FileHandler(log_file, encoding="utf-8")
+    # IMPORTANT: clear existing handlers to prevent duplicate lines on rerun/import
+    for h in list(logger.handlers):
+        logger.removeHandler(h)
+
+    # File handler (daily, append)
+    file_handler = logging.FileHandler(log_file, mode="a", encoding="utf-8")
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(detailed_formatter)
     logger.addHandler(file_handler)
 
-    # Console handler - logs INFO and above
+    # Console handler
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(simple_formatter)
     logger.addHandler(console_handler)
 
-    # Create separate error log file
-    error_log_file = os.path.join(log_dir, f"podcast_charts_errors_{timestamp}.log")
-    error_handler = logging.FileHandler(error_log_file, encoding="utf-8")
+    # Error file handler (daily, append)
+    error_handler = logging.FileHandler(error_log_file, mode="a", encoding="utf-8")
     error_handler.setLevel(logging.ERROR)
     error_handler.setFormatter(detailed_formatter)
     logger.addHandler(error_handler)
@@ -97,7 +100,6 @@ FAILED_REQ_LOG = os.path.join(OUTPUT_DIR, "failed_requests_charts.txt")
 FAILED_INSERTS_LOG = os.path.join(OUTPUT_DIR, "failed_inserts_charts.txt")
 CSV_OUTPUT = os.path.join(OUTPUT_DIR, "rank_comparison_charts.csv")
 
-# [REGIONS and COUNTRY_NAMES dictionaries remain the same - truncated for brevity]
 REGIONS = [
     "dz",
     "ao",
@@ -782,6 +784,32 @@ def get_last_table_name(cursor):
         return None
 
 
+def get_previous_table_name(cursor, exclude_table):
+    """Get the previous chart table name excluding a specific table (used when resuming)."""
+    logger.debug(f"Fetching previous table name excluding {exclude_table}")
+
+    cursor.execute(
+        """
+        SELECT TABLE_NAME 
+        FROM information_schema.TABLES
+        WHERE TABLE_SCHEMA = %s
+          AND TABLE_NAME LIKE 'apple_chart_%%'
+          AND TABLE_NAME <> %s
+        ORDER BY TABLE_NAME DESC
+        LIMIT 1
+    """,
+        ("podcast_169", exclude_table),
+    )
+    row = cursor.fetchone()
+
+    if row:
+        logger.info(f"Found previous table: {row[0]}")
+        return row[0]
+    else:
+        logger.info("No previous table found")
+        return None
+
+
 def create_new_table(cursor, table_name):
     """Create a new chart table with timestamp and optimized indexes"""
     logger.info(f"Creating new table: {table_name}")
@@ -984,7 +1012,7 @@ def main():
     start_time = datetime.datetime.now()
     logger.info("=" * 80)
     logger.info(
-        "Starting enhanced podcast charts collection with comprehensive logging"
+        "Starting enhanced podcast charts collection with resumption capability"
     )
     logger.info(f"Start time: {start_time}")
     logger.info(f"Log file: {main_log_file}")
@@ -1052,24 +1080,58 @@ def main():
                 f"Some database optimizations failed (this is usually OK): {e}"
             )
 
-        # Get last table name for comparison
-        logger.info("Checking for previous table")
-        last_table = get_last_table_name(cursor)
+        # ===============================
+        # TABLE RESUMPTION LOGIC
+        # ===============================
+        logger.info("Checking for existing tables and resumption possibility")
 
-        # Create new table with timestamp
+        last_table = get_last_table_name(cursor)  # most recent table (could be today's)
         now = datetime.datetime.now()
-        current_table = f"apple_chart_{now.strftime('%Y%m%d_%H%M%S')}"
+        today_str = now.strftime("%Y%m%d")
 
-        try:
-            create_new_table(cursor, current_table)
-            logger.info(f"Created new table: {current_table}")
-            if last_table:
-                logger.info(f"Will compare with previous table: {last_table}")
-        except mysql.connector.Error as e:
-            logger.error(f"Failed to create table: {e}")
-            cursor.close()
-            db.close()
-            return
+        reuse_existing = False
+        current_table = None
+        previous_table = None  # the baseline to compare against (yesterday)
+
+        if last_table and last_table.startswith(f"apple_chart_{today_str}"):
+            # Check if today's table is complete
+            cursor.execute(f"SELECT COUNT(DISTINCT countryCode) FROM {last_table}")
+            completed_regions = cursor.fetchone()[0]
+            if completed_regions == len(REGIONS):
+                logger.info(
+                    f"Today's table {last_table} already exists and is complete. Exiting."
+                )
+                cursor.close()
+                db.close()
+                session.close()
+                return  # <-- End the script immediately
+            else:
+                # If incomplete, still allow resumption
+                reuse_existing = True
+                current_table = last_table
+                previous_table = get_previous_table_name(
+                    cursor, exclude_table=current_table
+                )
+                logger.info(
+                    f"Resuming into existing table: {current_table} "
+                    f"(completed {completed_regions}/{len(REGIONS)} regions)"
+                )
+
+        if not reuse_existing:
+            current_table = f"apple_chart_{now.strftime('%Y%m%d_%H%M%S')}"
+            try:
+                create_new_table(cursor, current_table)
+                previous_table = last_table  # yesterday's (or None if first run)
+                logger.info(f"Created new table: {current_table}")
+                if previous_table:
+                    logger.info(f"Will compare with: {previous_table}")
+            except mysql.connector.Error as e:
+                logger.error(f"Failed to create table: {e}")
+                cursor.close()
+                db.close()
+                return
+
+        db.commit()
 
         insert_sql = f"""
         INSERT INTO {current_table}
@@ -1088,10 +1150,39 @@ def main():
         total_records_inserted = 0
 
         logger.info("Starting data collection phase")
-        logger.info(f"Processing {len(REGIONS)} regions")
+
+        # ===============================
+        # RESUME FROM LAST COMPLETED REGION
+        # ===============================
+        cursor.execute(f"SELECT DISTINCT countryCode FROM {current_table}")
+        done_regions = {row[0] for row in cursor.fetchall()}
+        start_index = 0
+
+        if done_regions:
+            last_done = None
+            for r in REGIONS:  # walk in processing order
+                if r in done_regions:
+                    last_done = r
+            if last_done:
+                # wipe last region to guard against partial work before crash
+                logger.info(f"Cleaning partial data for last region: {last_done}")
+                cursor.execute(
+                    f"DELETE FROM {current_table} WHERE countryCode = %s", (last_done,)
+                )
+                db.commit()
+                start_index = REGIONS.index(last_done)
+                logger.info(
+                    f"Resuming from region {last_done.upper()} (wiped its old rows)"
+                )
 
         total_regions = len(REGIONS)
-        for region_idx, region in enumerate(REGIONS, 1):
+        logger.info(
+            f"Processing {len(REGIONS[start_index:])} regions starting from index {start_index}"
+        )
+
+        for region_idx, region in enumerate(
+            REGIONS[start_index:], start=start_index + 1
+        ):
             logger.info(
                 f"Processing region: {region.upper()} ({region_idx}/{total_regions})"
             )
@@ -1171,12 +1262,17 @@ def main():
                     )
                     region_records += 1
 
-            # Batch insert per region to avoid memory issues
+            # Batch insert per region to avoid memory issues (with idempotent logic)
             if batch_insert_data:
                 logger.info(
                     f"Batch inserting {len(batch_insert_data)} records for {region.upper()}"
                 )
                 try:
+                    # Clear any existing data for this region first (idempotent)
+                    cursor.execute(
+                        f"DELETE FROM {current_table} WHERE countryCode = %s", (region,)
+                    )
+
                     inserted = batch_insert_podcasts(
                         cursor, insert_sql, batch_insert_data, failed_inserts
                     )
@@ -1210,12 +1306,21 @@ def main():
             db.rollback()
 
         # ===============================
-        # OPTIMIZED BULK RANK COMPARISON
+        # CONDITIONAL RANK COMPARISON
         # ===============================
-        logger.info("Starting rank comparison phase")
-        if last_table and last_table != current_table:
+        logger.info("Checking if rank comparison should be performed")
+
+        # Only run rank comparison if table is complete
+        cursor.execute(f"SELECT COUNT(DISTINCT countryCode) FROM {current_table}")
+        completed_regions = cursor.fetchone()[0]
+
+        if completed_regions == len(REGIONS) and previous_table:
+            logger.info("Starting rank comparison phase")
             try:
-                csv_data = bulk_rank_comparison(cursor, last_table, current_table)
+                logger.info(
+                    f"All regions completed ({completed_regions}/{len(REGIONS)}). Comparing with {previous_table}"
+                )
+                csv_data = bulk_rank_comparison(cursor, previous_table, current_table)
 
                 logger.info("Committing rank updates")
                 db.commit()
@@ -1250,7 +1355,12 @@ def main():
                 logger.error(f"Rank comparison failed: {e}")
                 failed_inserts.append(f"Rank comparison failed: {e}")
         else:
-            logger.info("No previous table found — skipping rank comparison")
+            if completed_regions != len(REGIONS):
+                logger.info(
+                    f"Skipping rank comparison - only {completed_regions}/{len(REGIONS)} regions completed"
+                )
+            elif not previous_table:
+                logger.info("Skipping rank comparison - no previous table available")
 
         # Save other output files
         try:
@@ -1296,7 +1406,15 @@ def main():
         logger.info(f"Failed requests: {len(failed_requests)}")
         logger.info(f"Failed inserts: {len(failed_inserts)}")
         logger.info(f"Missing lookup IDs: {len(missing_ids_set)}")
-        logger.info(f"Created table: {current_table}")
+        logger.info(f"Created/used table: {current_table}")
+
+        if previous_table:
+            logger.info(f"Compared with table: {previous_table}")
+
+        if reuse_existing:
+            logger.info("Mode: RESUMED from existing table")
+        else:
+            logger.info("Mode: FRESH start with new table")
 
         if failed_requests:
             logger.warning("FAILED REQUESTS BY REGION:")
@@ -1315,7 +1433,9 @@ def main():
         except Exception as e:
             logger.warning(f"Cleanup warning: {e}")
 
-        logger.info("Enhanced collection completed successfully!")
+        logger.info(
+            "Enhanced collection with resumption capability completed successfully!"
+        )
         logger.info("=" * 80)
 
     except Exception as e:

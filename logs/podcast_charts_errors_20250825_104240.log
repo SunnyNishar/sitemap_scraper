@@ -1,0 +1,2 @@
+2025-08-25 13:08:03 | ERROR    | safe_request_with_backoff | Line 597  | All 5 attempts failed for charts UZ/1505
+2025-08-25 13:08:03 | ERROR    | fetch_chart_ids      | Line 667  | Charts fetch failed for charts UZ/1505: HTTPSConnectionPool(host='itunes.apple.com', port=443): Max retries exceeded with url: /WebObjects/MZStoreServices.woa/ws/charts?cc=uz&g=1505&name=Podcasts&limit=250 (Caused by SSLError(SSLError(1, '[SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1028)')))

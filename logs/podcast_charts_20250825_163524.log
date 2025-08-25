@@ -1,0 +1,187 @@
+2025-08-25 16:35:24 | INFO     | main                 | Line 1010 | ================================================================================
+2025-08-25 16:35:24 | INFO     | main                 | Line 1011 | Starting enhanced podcast charts collection with resumption capability
+2025-08-25 16:35:24 | INFO     | main                 | Line 1014 | Start time: 2025-08-25 16:35:24.894423
+2025-08-25 16:35:24 | INFO     | main                 | Line 1015 | Log file: ./logs\podcast_charts_20250825_163524.log
+2025-08-25 16:35:24 | INFO     | main                 | Line 1016 | ================================================================================
+2025-08-25 16:35:24 | INFO     | main                 | Line 1020 | Initializing HTTP session
+2025-08-25 16:35:24 | INFO     | create_robust_session | Line 447  | Creating robust HTTP session
+2025-08-25 16:35:24 | DEBUG    | create_robust_session | Line 485  | HTTP session configured with 5 max retries
+2025-08-25 16:35:24 | INFO     | main                 | Line 1024 | Preparing output files
+2025-08-25 16:35:24 | INFO     | main                 | Line 1029 | Fetching genres from iTunes API
+2025-08-25 16:35:24 | DEBUG    | safe_request_with_backoff | Line 494  | Starting request for genres fetch: https://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/genres
+2025-08-25 16:35:24 | DEBUG    | _new_conn            | Line 1049 | Starting new HTTPS connection (1): itunes.apple.com:443
+2025-08-25 16:35:24 | DEBUG    | _make_request        | Line 544  | https://itunes.apple.com:443 "GET /WebObjects/MZStoreServices.woa/ws/genres HTTP/1.1" 200 121674
+2025-08-25 16:35:25 | DEBUG    | safe_request_with_backoff | Line 509  | Got response 200 for genres fetch
+2025-08-25 16:35:25 | DEBUG    | safe_request_with_backoff | Line 515  | Successfully parsed JSON response for genres fetch
+2025-08-25 16:35:25 | INFO     | main                 | Line 1035 | Successfully fetched genres data
+2025-08-25 16:35:25 | INFO     | main                 | Line 1041 | Processing genre information
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 0, parent: None
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 26: Podcasts
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 19 subgenres for Podcasts
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 1, parent: Podcasts
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1301: Arts
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 6 subgenres for Arts
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Arts
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1482: Books
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1402: Design
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1459: Fashion & Beauty
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1306: Food
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1405: Performing Arts
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1406: Visual Arts
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 6 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1321: Business
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 6 subgenres for Business
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Business
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1410: Careers
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1493: Entrepreneurship
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1412: Investing
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1491: Management
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1492: Marketing
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1494: Non-Profit
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 6 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1303: Comedy
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 3 subgenres for Comedy
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Comedy
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1496: Comedy Interviews
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1495: Improv
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1497: Stand-Up
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 3 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1304: Education
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 4 subgenres for Education
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Education
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1501: Courses
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1499: How To
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1498: Language Learning
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1500: Self-Improvement
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 4 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1483: Fiction
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 3 subgenres for Fiction
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Fiction
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1486: Comedy Fiction
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1484: Drama
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1485: Science Fiction
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 3 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1511: Government
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1512: Health & Fitness
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 6 subgenres for Health & Fitness
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Health & Fitness
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1513: Alternative Health
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1514: Fitness
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1518: Medicine
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1517: Mental Health
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1515: Nutrition
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1516: Sexuality
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 6 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1487: History
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1305: Kids & Family
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 4 subgenres for Kids & Family
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Kids & Family
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1519: Education for Kids
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1521: Parenting
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1522: Pets & Animals
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1520: Stories for Kids
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 4 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1502: Leisure
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 8 subgenres for Leisure
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Leisure
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1510: Animation & Manga
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1503: Automotive
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1504: Aviation
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1506: Crafts
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1507: Games
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1505: Hobbies
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1508: Home & Garden
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1509: Video Games
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 8 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1310: Music
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 3 subgenres for Music
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Music
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1523: Music Commentary
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1524: Music History
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1525: Music Interviews
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 3 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1489: News
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 7 subgenres for News
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: News
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1490: Business News
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1526: Daily News
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1531: Entertainment News
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1530: News Commentary
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1527: Politics
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1529: Sports News
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1528: Tech News
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 7 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1314: Religion & Spirituality
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 7 subgenres for Religion & Spirituality
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Religion & Spirituality
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1438: Buddhism
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1439: Christianity
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1463: Hinduism
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1440: Islam
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1441: Judaism
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1532: Religion
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1444: Spirituality
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 7 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1533: Science
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 9 subgenres for Science
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Science
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1538: Astronomy
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1539: Chemistry
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1540: Earth Sciences
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1541: Life Sciences
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1536: Mathematics
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1534: Natural Sciences
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1537: Nature
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1542: Physics
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1535: Social Sciences
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 9 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1324: Society & Culture
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 5 subgenres for Society & Culture
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Society & Culture
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1543: Documentary
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1302: Personal Journals
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1443: Philosophy
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1320: Places & Travel
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1544: Relationships
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 5 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1545: Sports
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 15 subgenres for Sports
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: Sports
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1549: Baseball
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1548: Basketball
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1554: Cricket
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1560: Fantasy Sports
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1547: Football
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1553: Golf
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1550: Hockey
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1552: Rugby
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1551: Running
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1546: Soccer
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1558: Swimming
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1556: Tennis
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1557: Volleyball
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1559: Wilderness
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1555: Wrestling
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 15 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1309: TV & Film
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 625  | Found 5 subgenres for TV & Film
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 609  | Collecting genre info at depth 2, parent: TV & Film
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1562: After Shows
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1564: Film History
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1565: Film Interviews
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1563: Film Reviews
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1561: TV Reviews
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 5 genres at depth 2
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1318: Technology
+2025-08-25 16:35:25 | DEBUG    | collect_genre_info   | Line 614  | Processing genre 1488: True Crime
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 110 genres at depth 1
+2025-08-25 16:35:25 | INFO     | collect_genre_info   | Line 628  | Collected 111 genres at depth 0
+2025-08-25 16:35:25 | INFO     | main                 | Line 1043 | Processed 111 total genres
+2025-08-25 16:35:25 | INFO     | main                 | Line 1046 | Connecting to database
+2025-08-25 16:35:25 | INFO     | main                 | Line 1059 | Successfully connected to database
+2025-08-25 16:35:25 | INFO     | main                 | Line 1066 | Optimizing database session
+2025-08-25 16:35:25 | INFO     | main                 | Line 1074 | Database session optimized for bulk operations
+2025-08-25 16:35:25 | INFO     | main                 | Line 1083 | Checking for existing tables and resumption possibility
+2025-08-25 16:35:25 | DEBUG    | get_last_table_name  | Line 764  | Fetching last table name
+2025-08-25 16:35:25 | INFO     | get_last_table_name  | Line 777  | Found last table: apple_chart_20250825_094034
+2025-08-25 16:35:25 | INFO     | main                 | Line 1098 | Today's table apple_chart_20250825_094034 already exists and is complete. Exiting.
